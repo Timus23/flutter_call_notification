@@ -30,6 +30,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   lateinit var applicationContext : Context;
   private lateinit var foregroundIntent : Intent;
   private var initialActivity: Activity? = null
+    private var unHandledActionIntent : Intent? = null;
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
@@ -49,11 +50,23 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
           cancelCallNotification()
           result.success(true)
         }
+        "showUnhandledPressedAction" -> {
+            showUnhandledPressedAction();
+            result.success(true);
+        }
         else -> {
           result.notImplemented()
         }
     }
   }
+
+
+    private fun showUnhandledPressedAction(){
+        if(unHandledActionIntent != null){
+            receiveNotificationAction(unHandledActionIntent!!);
+            unHandledActionIntent = null;
+        }
+    }
 
   private fun receiveNotificationAction(intent: Intent): Boolean {
       if (!intent.getBooleanExtra("isVisited", false)) {
@@ -107,6 +120,9 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     application.registerActivityLifecycleCallbacks(this)
 
     val intent = initialActivity!!.intent
+    if(intent.action == NotificationButtonActions.acceptAction || intent.action == NotificationButtonActions.launchAction || intent.action == NotificationButtonActions.rejectAction){
+       unHandledActionIntent = intent;
+      }
     }
 
     override fun onDetachedFromActivityForConfigChanges() {

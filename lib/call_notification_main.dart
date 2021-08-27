@@ -36,6 +36,7 @@ class CallNotification {
   initialize() {
     WidgetsFlutterBinding.ensureInitialized();
     _channel.setMethodCallHandler(_handleMethod);
+    _channel.invokeMethod("showUnhandledPressedAction");
   }
 
   Future<dynamic> _handleMethod(MethodCall call) async {
