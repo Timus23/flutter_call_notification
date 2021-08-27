@@ -1,0 +1,1 @@
+enum ClientRole { Broadcaster, Audience }
