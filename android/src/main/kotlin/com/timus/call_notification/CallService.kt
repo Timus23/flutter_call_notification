@@ -25,6 +25,7 @@ class CallService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val tempData : HashMap<String,Any> = intent?.getSerializableExtra("notificationData") as HashMap<String,Any>;
+        playRingtone()
         displayNotifications(NotificationData(tempData))
         return super.onStartCommand(intent, flags, startId)
     }
@@ -40,6 +41,7 @@ class CallService : Service() {
         RingtoneManager.setActualDefaultRingtoneUri(
                 applicationContext, RingtoneManager.TYPE_RINGTONE,ringTonePath);
         ringTone = RingtoneManager.getRingtone(applicationContext,ringTonePath)
+
         ringTone.play();
     }
 
