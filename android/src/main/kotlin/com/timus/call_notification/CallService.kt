@@ -1,11 +1,11 @@
 package com.timus.call_notification
 
 import android.app.*
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.icu.util.TimeZone
 import android.media.AudioAttributes
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
@@ -13,9 +13,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.timus.call_notification.models.NotificationData
 
+
 class CallService : Service() {
     lateinit var notificationManagerCompat: NotificationManagerCompat
     private val ChannelId = "PersonalNotification"
+    lateinit var ringTone : Ringtone;
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -28,8 +30,17 @@ class CallService : Service() {
     }
 
     override fun onDestroy() {
+        ringTone.stop();
         stopForeground(true)
         super.onDestroy()
+    }
+
+    private fun playRingtone(){
+        val ringTonePath: Uri = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.ring_tone);
+        RingtoneManager.setActualDefaultRingtoneUri(
+                applicationContext, RingtoneManager.TYPE_RINGTONE,ringTonePath);
+        ringTone = RingtoneManager.getRingtone(applicationContext,ringTonePath)
+        ringTone.play();
     }
 
     private fun displayNotifications(notificationData: NotificationData) {
@@ -70,11 +81,12 @@ class CallService : Service() {
             val importance: Int = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(ChannelId, notificationData.callerName, importance)
             channel.description = notificationData.description
-            val alarmSound: Uri = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.ring_tone);
-            val attributes : AudioAttributes = AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    .build()
-            channel.setSound(alarmSound,attributes)
+            channel.setSound(null,null);
+//            val alarmSound: Uri = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.ring_tone);
+//            val attributes : AudioAttributes = AudioAttributes.Builder()
+//                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+//                    .build()
+//            channel.setSound(alarmSound,attributes)
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }

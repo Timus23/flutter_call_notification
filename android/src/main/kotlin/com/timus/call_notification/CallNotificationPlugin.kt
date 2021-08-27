@@ -30,7 +30,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   lateinit var applicationContext : Context;
   private lateinit var foregroundIntent : Intent;
   private var initialActivity: Activity? = null
-    private var unHandledActionIntent : Intent? = null;
+  private var unHandledActionIntent : Intent? = null;
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
