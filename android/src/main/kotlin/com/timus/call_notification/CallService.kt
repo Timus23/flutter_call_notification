@@ -9,6 +9,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
+import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.timus.call_notification.models.NotificationData
@@ -18,6 +19,7 @@ class CallService : Service() {
     lateinit var notificationManagerCompat: NotificationManagerCompat
     private val ChannelId = "PersonalNotification"
     lateinit var ringTone : Ringtone;
+    lateinit var vibrator: Vibrator;
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -26,14 +28,22 @@ class CallService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val tempData : HashMap<String,Any> = intent?.getSerializableExtra("notificationData") as HashMap<String,Any>;
         playRingtone()
+        vibratePhone()
         displayNotifications(NotificationData(tempData))
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         ringTone.stop();
+        vibrator.cancel()
         stopForeground(true)
         super.onDestroy()
+    }
+
+    private fun vibratePhone(){
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator;
+        val vibrationPattern = longArrayOf(0, 100, 200, 300);
+        vibrator.vibrate(vibrationPattern,0);
     }
 
     private fun playRingtone(){
@@ -72,8 +82,6 @@ class CallService : Service() {
         builder.addAction(R.drawable.ic_action_play_arrow, "Answer", receiveIntent)
         builder.addAction(R.drawable.ic_action_play_arrow, "Decline", declineIntent)
         val notification: Notification = builder.build()
-        val vibrate = longArrayOf(0, 100, 200, 300)
-        notification.vibrate = vibrate;
         notification.flags = Notification.FLAG_INSISTENT;
         startForeground(1,notification)
     }
