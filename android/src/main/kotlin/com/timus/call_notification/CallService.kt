@@ -48,12 +48,20 @@ class CallService : Service() {
     }
 
     private fun playRingtone(){
-        val ringTonePath: Uri = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.ring_tone);
+        val ringTonePath: Uri = getRingToneUri();
         RingtoneManager.setActualDefaultRingtoneUri(
                 applicationContext, RingtoneManager.TYPE_RINGTONE,ringTonePath);
         ringTone = RingtoneManager.getRingtone(applicationContext,ringTonePath)
-
         ringTone.play();
+    }
+
+    private fun getRingToneUri() : Uri {
+       val ringtoneId = resources.getIdentifier("ringtone","raw",applicationContext.packageName);
+        return if(ringtoneId > 0){
+            Uri.parse("android.resource://" + applicationContext.packageName + "/" + ringtoneId)
+        }else{
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        }
     }
 
     private fun displayNotifications(notificationData: NotificationData) {
