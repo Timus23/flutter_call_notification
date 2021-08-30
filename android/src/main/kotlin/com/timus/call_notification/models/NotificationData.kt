@@ -5,7 +5,6 @@ import com.timus.call_notification.enums.ClientRole
 
 class NotificationData(arguments: Map<String, Any>) {
     var callerName : String = arguments["callerName"] as String;
-    var description : String = arguments["description"] as String;
     var roomId :String = arguments["roomId"] as String
     var clientRole: ClientRole;
     var channelProfile: ChannelProfile;
@@ -20,7 +19,6 @@ class NotificationData(arguments: Map<String, Any>) {
     fun toMap(): Map<String, Any> {
         var returnedObject: HashMap<String, Any> = HashMap<String, Any> ()
         returnedObject["callerName"] = this.callerName;
-        returnedObject["description"] = this.description;
         returnedObject["roomId"] = this.roomId;
         returnedObject["clientRole"] = getEnumClientRoleString(this.clientRole)
         returnedObject["channelProfile"] = getEnumChannelProfileString(this.channelProfile)

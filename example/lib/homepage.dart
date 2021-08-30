@@ -59,11 +59,7 @@ class _HomepageState extends State<Homepage> {
             onPressed: () {
               CallNotificationData callNotificationData = CallNotificationData(
                 callerName: "Sumit kakshapati",
-                description: "is calling",
                 roomId: "123456",
-                channelProfile: ChannelProfile.LiveBroadcasting,
-                clientRole: ClientRole.Audience,
-                extra: {"Hello": "World"},
               );
               CallNotification()
                   .showNotification(callNotificationData: callNotificationData);
@@ -74,11 +70,7 @@ class _HomepageState extends State<Homepage> {
             onPressed: () {
               CallNotificationData callNotificationData = CallNotificationData(
                 callerName: "Sumit kakshapati",
-                description: "is calling",
                 roomId: "123456",
-                channelProfile: ChannelProfile.LiveBroadcasting,
-                clientRole: ClientRole.Audience,
-                extra: {"Hello": "World"},
               );
               CallNotification()
                   .actionStream

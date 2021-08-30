@@ -83,7 +83,7 @@ class CallService : Service() {
         var declineIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 1,rejectIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, ChannelId)
         builder.setSmallIcon(applicationContext.applicationInfo.icon)
-        builder.setContentText(notificationData.description)
+        builder.setContentText("is calling")
         builder.setContentTitle(notificationData.callerName)
         builder.setContentIntent(launchPendingIntent);
         builder.setFullScreenIntent(launchPendingIntent,true)
@@ -100,13 +100,8 @@ class CallService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance: Int = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(ChannelId, notificationData.callerName, importance)
-            channel.description = notificationData.description
+            channel.description = "is calling"
             channel.setSound(null,null);
-//            val alarmSound: Uri = Uri.parse("android.resource://" + applicationContext.packageName + "/" + R.raw.ring_tone);
-//            val attributes : AudioAttributes = AudioAttributes.Builder()
-//                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-//                    .build()
-//            channel.setSound(alarmSound,attributes)
             notificationManagerCompat.createNotificationChannel(channel)
         }
     }

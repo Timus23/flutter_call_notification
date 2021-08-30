@@ -4,25 +4,22 @@ import 'package:call_notification/utils/enum_utils.dart';
 
 class CallNotificationData {
   String callerName;
-  String description;
   String roomId;
   ClientRole clientRole;
   ChannelProfile channelProfile;
   Map<String, dynamic> extra;
 
   CallNotificationData({
-    required this.description,
     required this.callerName,
     required this.roomId,
-    required this.channelProfile,
-    required this.clientRole,
-    required this.extra,
+    this.channelProfile = ChannelProfile.Communication,
+    this.clientRole = ClientRole.Audience,
+    this.extra = const {},
   });
 
   Map<String, dynamic> toJson() {
     return {
       "callerName": callerName,
-      "description": description,
       "roomId": roomId,
       "channelProfile":
           EnumTransformUtils.getChannelProfile(this.channelProfile),
@@ -38,7 +35,6 @@ class CallNotificationData {
           json["channelProfile"] ?? ""),
       clientRole:
           EnumTransformUtils.getClientRoleEnum(json["clientRole"] ?? ""),
-      description: json["description"] ?? "",
       roomId: json["roomId"] ?? "",
       extra: Map<String, dynamic>.from(json["extra"] ?? {}),
     );
