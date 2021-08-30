@@ -85,7 +85,8 @@ class CallService : Service() {
         builder.setSmallIcon(applicationContext.applicationInfo.icon)
         builder.setContentText(notificationData.description)
         builder.setContentTitle(notificationData.callerName)
-//        builder.setFullScreenIntent(launchPendingIntent,true)
+        builder.setContentIntent(launchPendingIntent);
+        builder.setFullScreenIntent(launchPendingIntent,true)
         builder.setOnlyAlertOnce(false)
         builder.priority = NotificationCompat.PRIORITY_HIGH
         builder.addAction(R.drawable.call_accept, "Answer", receiveIntent)
