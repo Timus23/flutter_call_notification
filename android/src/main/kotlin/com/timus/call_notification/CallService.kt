@@ -3,13 +3,14 @@ package com.timus.call_notification
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.media.AudioAttributes
+import android.graphics.drawable.Drawable
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.os.Vibrator
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.timus.call_notification.models.NotificationData
@@ -27,8 +28,8 @@ class CallService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val tempData : HashMap<String,Any> = intent?.getSerializableExtra("notificationData") as HashMap<String,Any>;
-        playRingtone()
-        vibratePhone()
+        playRingtone();
+        vibratePhone();
         displayNotifications(NotificationData(tempData))
         return super.onStartCommand(intent, flags, startId)
     }
@@ -73,14 +74,14 @@ class CallService : Service() {
         var receiveIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 0,acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         var declineIntent: PendingIntent = PendingIntent.getActivity(applicationContext, 1,rejectIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, ChannelId)
-        builder.setSmallIcon(R.drawable.ic_action_play_arrow)
+        builder.setSmallIcon(applicationContext.applicationInfo.icon)
         builder.setContentText(notificationData.description)
         builder.setContentTitle(notificationData.callerName)
-        builder.setFullScreenIntent(launchPendingIntent,true)
+//        builder.setFullScreenIntent(launchPendingIntent,true)
         builder.setOnlyAlertOnce(false)
         builder.priority = NotificationCompat.PRIORITY_HIGH
-        builder.addAction(R.drawable.ic_action_play_arrow, "Answer", receiveIntent)
-        builder.addAction(R.drawable.ic_action_play_arrow, "Decline", declineIntent)
+        builder.addAction(R.drawable.call_accept, "Answer", receiveIntent)
+        builder.addAction(R.drawable.call_end, "Decline", declineIntent)
         val notification: Notification = builder.build()
         notification.flags = Notification.FLAG_INSISTENT;
         startForeground(1,notification)
