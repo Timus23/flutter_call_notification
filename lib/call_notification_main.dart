@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:call_notification/call_defination.dart';
 import 'package:call_notification/model/call_notification_data.dart';
@@ -61,5 +62,15 @@ class CallNotification {
 
   cancelCallNotification() async {
     await _channel.invokeMethod('cancelCallNotification');
+  }
+
+  Future<bool> get isNotificationEnabled async {
+    if (Platform.isAndroid) {
+      final res =
+          (await _channel.invokeMethod('isNotificationEnabled')) as bool;
+      return res;
+    } else {
+      return false;
+    }
   }
 }

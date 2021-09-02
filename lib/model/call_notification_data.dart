@@ -8,6 +8,7 @@ class CallNotificationData {
   ClientRole clientRole;
   ChannelProfile channelProfile;
   Map<String, dynamic> extra;
+  int notificationAutoCancelDuration;
 
   CallNotificationData({
     required this.callerName,
@@ -15,6 +16,7 @@ class CallNotificationData {
     this.channelProfile = ChannelProfile.Communication,
     this.clientRole = ClientRole.Audience,
     this.extra = const {},
+    this.notificationAutoCancelDuration = 30,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class CallNotificationData {
           EnumTransformUtils.getChannelProfile(this.channelProfile),
       "clientRole": EnumTransformUtils.getClientRole(this.clientRole),
       "extra": this.extra,
+      "notificationDuration": this.notificationAutoCancelDuration,
     };
   }
 
@@ -37,6 +40,7 @@ class CallNotificationData {
           EnumTransformUtils.getClientRoleEnum(json["clientRole"] ?? ""),
       roomId: json["roomId"] ?? "",
       extra: Map<String, dynamic>.from(json["extra"] ?? {}),
+      notificationAutoCancelDuration: json["notificationDuration"] ?? 30,
     );
   }
 }

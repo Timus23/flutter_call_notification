@@ -28,15 +28,17 @@ class CallService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val tempData : HashMap<String,Any> = intent?.getSerializableExtra("notificationData") as HashMap<String,Any>;
-        playRingtone();
-        vibratePhone();
         displayNotifications(NotificationData(tempData))
+        vibratePhone();
+        playRingtone();
+        setNotificationStatus(true)
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         ringTone.stop();
-        vibrator.cancel()
+        vibrator.cancel();
+        setNotificationStatus(false)
         stopForeground(true)
         super.onDestroy()
     }
@@ -86,6 +88,7 @@ class CallService : Service() {
         builder.setContentText("is calling")
         builder.setContentTitle(notificationData.callerName)
         builder.setContentIntent(launchPendingIntent);
+        builder.priority = 2;
         builder.setFullScreenIntent(launchPendingIntent,true)
         builder.setOnlyAlertOnce(false)
         builder.priority = NotificationCompat.PRIORITY_HIGH
@@ -110,5 +113,10 @@ class CallService : Service() {
         val packageName = context.packageName
         val packageManager = context.packageManager
         return packageManager.getLaunchIntentForPackage(packageName)!!
+    }
+
+    private fun setNotificationStatus(status : Boolean) {
+        val preferences = applicationContext.getSharedPreferences(SharedPreferenceUtils.PreferenceName,Context.MODE_PRIVATE);
+        preferences.edit().putBoolean(SharedPreferenceUtils.NotificationStatus,status).commit()
     }
 }

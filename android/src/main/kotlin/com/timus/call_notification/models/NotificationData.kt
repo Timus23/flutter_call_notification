@@ -9,6 +9,7 @@ class NotificationData(arguments: Map<String, Any>) {
     var clientRole: ClientRole;
     var channelProfile: ChannelProfile;
     var extra : HashMap<String,Any>;
+    var notificationDuration : Int = arguments["notificationDuration"] as Int;
 
     init {
         clientRole = getClientRoleEnum(arguments["clientRole"] as String)
@@ -23,6 +24,7 @@ class NotificationData(arguments: Map<String, Any>) {
         returnedObject["clientRole"] = getEnumClientRoleString(this.clientRole)
         returnedObject["channelProfile"] = getEnumChannelProfileString(this.channelProfile)
         returnedObject["extra"] = this.extra
+        returnedObject["notificationDuration"] = this.notificationDuration
         return returnedObject;
     }
 
