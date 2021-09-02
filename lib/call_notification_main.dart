@@ -65,12 +65,8 @@ class CallNotification {
   }
 
   Future<bool> get isNotificationEnabled async {
-    if (Platform.isAndroid) {
       final res =
           (await _channel.invokeMethod('isNotificationEnabled')) as bool;
       return res;
-    } else {
-      return false;
-    }
   }
 }

@@ -7,6 +7,7 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
     var methodChannel : FlutterMethodChannel?
     var avPlayer : AVAudioPlayer?
     public let notificationIdentifier = "Call Notification";
+    public let notificationStatus = "CallNotifications";
  
     public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "call_notification", binaryMessenger: registrar.messenger())
@@ -57,6 +58,9 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
         cancelNotification();
     } else if (call.method == "showUnhandledPressedAction"){
         print("showUnhandledPressedAction");
+    } else if (call.method == "isNotificationEnabled"){
+        let status = self.getCurrentNotificationStatus();
+        result(status)
     } else {
         result("Not implemented")
     }
@@ -64,6 +68,7 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
     
     private func cancelNotification(){
         avPlayer?.stop()
+        self.setNotificationStatus(status: false)
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [notificationIdentifier])
     }
     
@@ -81,6 +86,8 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
         userNotificationCenter.add(request, withCompletionHandler:{(err) in
             self.playAudio()
         })
+        
+        self.setNotificationStatus(status: true)
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(notificationData.notificationDuration)) {
             self.cancelNotification()
@@ -107,5 +114,18 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
                 print(error);
             }
         }
+    }
+    
+    private func getCurrentNotificationStatus() -> Bool {
+        let preferences = UserDefaults.standard;
+        preferences.register(defaults: [notificationStatus : false])
+        let status  = preferences.bool(forKey: notificationStatus)
+        return status
+    }
+    
+    private func setNotificationStatus(status : Bool) {
+        let preferences = UserDefaults.standard;
+        preferences.setValue(status, forKey: notificationStatus)
+        preferences.synchronize()
     }
 }
