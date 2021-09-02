@@ -61,8 +61,8 @@ class _HomepageState extends State<Homepage> {
                 callerName: "Sumit kakshapati",
                 roomId: "123456",
               );
-              CallNotification()
-                  .showNotification(callNotificationData: callNotificationData);
+                CallNotification().showNotification(
+                    callNotificationData: callNotificationData);
             },
             child: Text("Show Notification"),
           ),
