@@ -10,6 +10,7 @@ class NotificationData(arguments: Map<String, Any>) {
     var channelProfile: ChannelProfile;
     var extra : HashMap<String,Any>;
     var notificationDuration : Int = arguments["notificationDuration"] as Int;
+    val isBackgroundNotification : Boolean = arguments["isBackgroundNotification"] as Boolean
 
     init {
         clientRole = getClientRoleEnum(arguments["clientRole"] as String)
@@ -25,6 +26,7 @@ class NotificationData(arguments: Map<String, Any>) {
         returnedObject["channelProfile"] = getEnumChannelProfileString(this.channelProfile)
         returnedObject["extra"] = this.extra
         returnedObject["notificationDuration"] = this.notificationDuration
+        returnedObject["isBackgroundNotification"] = this.isBackgroundNotification
         return returnedObject;
     }
 

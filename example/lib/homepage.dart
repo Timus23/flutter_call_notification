@@ -60,6 +60,7 @@ class _HomepageState extends State<Homepage> {
               CallNotificationData callNotificationData = CallNotificationData(
                 callerName: "Sumit kakshapati",
                 roomId: "123456",
+                isBackgroundNotification: true,
               );
                 CallNotification().showNotification(
                     callNotificationData: callNotificationData);
@@ -71,6 +72,7 @@ class _HomepageState extends State<Homepage> {
               CallNotificationData callNotificationData = CallNotificationData(
                 callerName: "Sumit kakshapati",
                 roomId: "123456",
+                isBackgroundNotification: true,
               );
               CallNotification()
                   .actionStream
