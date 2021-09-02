@@ -74,12 +74,21 @@ class _HomepageState extends State<Homepage> {
               );
               CallNotification()
                   .actionStream
-                  .add(NotificationReceivedAction.fromJson({
-                    "buttonInputType": "accept",
-                    "notification": callNotificationData.toJson(),
-                  }));
+                  .add(NotificationReceivedAction.fromJson(
+                    {
+                      "buttonInputType": "accept",
+                      "notification": callNotificationData.toJson(),
+                    },
+                  ));
             },
             child: Text("Stream"),
+          ),
+          TextButton(
+            onPressed: () async {
+              final status = await CallNotification().isNotificationEnabled;
+              print(status);
+            },
+            child: Text("NotificationStatus"),
           )
         ],
       ),

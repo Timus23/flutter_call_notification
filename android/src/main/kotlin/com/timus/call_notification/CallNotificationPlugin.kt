@@ -5,9 +5,11 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import com.timus.call_notification.enums.NotificationLifeCycle
+import com.timus.call_notification.models.NotificationData
 import com.timus.call_notification.models.ReceivedNotificationData
 import com.timus.call_notification.utils.NotificationBuilder
 
@@ -19,6 +21,10 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.concurrent.timer
+import kotlin.concurrent.timerTask
 
 /** CallNotificationPlugin */
 class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener,ActivityAware,Application.ActivityLifecycleCallbacks{
@@ -31,6 +37,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   private lateinit var foregroundIntent : Intent;
   private var initialActivity: Activity? = null
   private var unHandledActionIntent : Intent? = null;
+    private var notificationTimer : Timer? = null;
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
@@ -43,7 +50,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     when (call.method) {
         "showNotification" -> {
           val message: HashMap<String, Any> = call.arguments()
-            startCallForegroundService(message);
+          checkNotificationStatusAndStartForgroundService(message)
           result.success(true)
         }
         "cancelCallNotification" -> {
@@ -53,6 +60,9 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
         "showUnhandledPressedAction" -> {
             showUnhandledPressedAction();
             result.success(true);
+        } "isNotificationEnabled" -> {
+          val status = currentNotificationStatus();
+          result.success(status)
         }
         else -> {
           result.notImplemented()
@@ -60,6 +70,10 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
   }
 
+    private fun currentNotificationStatus() : Boolean {
+        val preferences = applicationContext.getSharedPreferences(SharedPreferenceUtils.PreferenceName,Context.MODE_PRIVATE);
+        return preferences.getBoolean(SharedPreferenceUtils.NotificationStatus,false)
+    }
 
     private fun showUnhandledPressedAction(){
         if(unHandledActionIntent != null){
@@ -92,13 +106,30 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
         return true
     }
 
+    private fun checkNotificationStatusAndStartForgroundService(notificationData : HashMap<String,Any>){
+        val status = currentNotificationStatus();
+        if(!status){
+            startCallForegroundService(notificationData)
+        }
+    }
+
     private fun startCallForegroundService(notificationData : HashMap<String,Any>){
         foregroundIntent.putExtra("notificationData",notificationData);
         ContextCompat.startForegroundService(applicationContext,foregroundIntent);
+        val formatedNotificationData = NotificationData(notificationData)
+        notificationTimer = Timer("PersonalNotification",false)
+        notificationTimer!!.schedule(timerTask{
+            cancelCallNotification()
+        },(formatedNotificationData.notificationDuration * 1000).toLong())
     }
 
   private fun cancelCallNotification(){
-    applicationContext.stopService(foregroundIntent)
+      val status = currentNotificationStatus();
+      if(status){
+          applicationContext.stopService(foregroundIntent)
+      }
+      notificationTimer?.cancel();
+      notificationTimer = null;
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
