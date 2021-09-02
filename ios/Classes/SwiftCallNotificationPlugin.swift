@@ -79,12 +79,21 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
         notificationContent.title = notificationData.callerName
         notificationContent.body = "is calling"
         notificationContent.userInfo = notificationData.toMap()
+        
+        if(notificationData.isBackgroundNotification) {
+            if #available(iOS 12.0, *) {
+                notificationContent.sound = UNNotificationSound.defaultCritical
+            }
+        }
+        
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         
         let request = UNNotificationRequest(identifier: notificationIdentifier, content: notificationContent, trigger: trigger)
         
         userNotificationCenter.add(request, withCompletionHandler:{(err) in
-            self.playAudio()
+            if(notificationData.isBackgroundNotification == false){
+                self.playAudio()
+            }
         })
         
         self.setNotificationStatus(status: true)

@@ -5,6 +5,7 @@ class CallNotificationData{
     var channelProfile: ChannelProfile
     var extra : Dictionary<String,Any>
     var notificationDuration : Int
+    var isBackgroundNotification : Bool;
     
     init(json : Dictionary<String,Any>) {
         self.callerName = json["callerName"] as? String ?? ""
@@ -13,6 +14,7 @@ class CallNotificationData{
         self.channelProfile = EnumUtils.getChannelProfileEnum(channel: json["channelProfile"] as? String ?? "")
         self.extra = json["extra"] as? Dictionary<String,Any> ?? [String : Any]()
         self.notificationDuration = (json["notificationDuration"] as? Int) ?? 30
+        self.isBackgroundNotification = (json["isBackgroundNotification"] as? Bool) ?? false
     }
     
     func toMap() -> Dictionary<String,Any>{
@@ -22,7 +24,8 @@ class CallNotificationData{
             "clientRole" : EnumUtils.getClientRoleString(role: self.clientRole),
             "channelProfile": EnumUtils.getChannelProfileString(channel: self.channelProfile),
             "extra" : self.extra,
-            "notificationDuration" : self.notificationDuration
+            "notificationDuration" : self.notificationDuration,
+            "isBackgroundNotification" : self.isBackgroundNotification
         ]
     }
 }
