@@ -81,6 +81,10 @@ public class SwiftCallNotificationPlugin: NSObject, FlutterPlugin,UNUserNotifica
         userNotificationCenter.add(request, withCompletionHandler:{(err) in
             self.playAudio()
         })
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(notificationData.notificationDuration)) {
+            self.cancelNotification()
+        }
     }
     
     func playAudio(){
