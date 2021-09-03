@@ -10,6 +10,13 @@ class NotificationReceivedAction {
     required this.notification,
   });
 
+  factory NotificationReceivedAction.handled() {
+    return NotificationReceivedAction(
+      buttonInputType: ButtonInputType.Handled,
+      notification: CallNotificationData.initial(),
+    );
+  }
+
   factory NotificationReceivedAction.fromJson(Map<String, dynamic> json) {
     ButtonInputType type = ButtonInputType.Launch;
     if (json["buttonInputType"]?.toString() == "accept") {

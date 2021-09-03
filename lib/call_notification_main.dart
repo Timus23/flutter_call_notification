@@ -55,6 +55,10 @@ class CallNotification {
     }
   }
 
+  eventHandled() {
+    _actionSubject.add(NotificationReceivedAction.handled());
+  }
+
   showNotification({required CallNotificationData callNotificationData}) async {
     await _channel.invokeMethod(
         'showNotification', callNotificationData.toJson());
@@ -65,8 +69,7 @@ class CallNotification {
   }
 
   Future<bool> get isNotificationEnabled async {
-      final res =
-          (await _channel.invokeMethod('isNotificationEnabled')) as bool;
-      return res;
+    final res = (await _channel.invokeMethod('isNotificationEnabled')) as bool;
+    return res;
   }
 }

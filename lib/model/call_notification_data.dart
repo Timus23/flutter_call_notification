@@ -47,4 +47,12 @@ class CallNotificationData {
       isBackgroundNotification: json["isBackgroundNotification"] ?? false,
     );
   }
+
+  factory CallNotificationData.initial() {
+    return CallNotificationData(
+      callerName: "",
+      roomId: "",
+      isBackgroundNotification: false,
+    );
+  }
 }
