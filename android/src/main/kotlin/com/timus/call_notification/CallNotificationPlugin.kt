@@ -37,7 +37,8 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   private lateinit var foregroundIntent : Intent;
   private var initialActivity: Activity? = null
   private var unHandledActionIntent : Intent? = null;
-    private var notificationTimer : Timer? = null;
+  private var notificationTimer : Timer? = null;
+    private var isNotificationEnabled = false;
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
@@ -61,8 +62,8 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
             showUnhandledPressedAction();
             result.success(true);
         } "isNotificationEnabled" -> {
-          val status = currentNotificationStatus();
-          result.success(status)
+//          val status = currentNotificationStatus();
+          result.success(isNotificationEnabled)
         }
         else -> {
           result.notImplemented()
@@ -107,8 +108,8 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
 
     private fun checkNotificationStatusAndStartForgroundService(notificationData : HashMap<String,Any>){
-        val status = currentNotificationStatus();
-        if(!status){
+        if(!isNotificationEnabled) {
+            isNotificationEnabled = true;
             startCallForegroundService(notificationData)
         }
     }
@@ -124,9 +125,10 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
 
   private fun cancelCallNotification(){
-      val status = currentNotificationStatus();
-      if(status){
+//      val status = currentNotificationStatus();
+      if(isNotificationEnabled){
           applicationContext.stopService(foregroundIntent)
+          isNotificationEnabled = false;
       }
       notificationTimer?.cancel();
       notificationTimer = null;

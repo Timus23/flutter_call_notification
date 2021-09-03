@@ -31,14 +31,14 @@ class CallService : Service() {
         displayNotifications(NotificationData(tempData))
         vibratePhone();
         playRingtone();
-        setNotificationStatus(true)
+//        setNotificationStatus(true)
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         ringTone.stop();
         vibrator.cancel();
-        setNotificationStatus(false)
+//        setNotificationStatus(false)
         stopForeground(true)
         super.onDestroy()
     }
@@ -115,8 +115,8 @@ class CallService : Service() {
         return packageManager.getLaunchIntentForPackage(packageName)!!
     }
 
-    private fun setNotificationStatus(status : Boolean) {
-        val preferences = applicationContext.getSharedPreferences(SharedPreferenceUtils.PreferenceName,Context.MODE_PRIVATE);
-        preferences.edit().putBoolean(SharedPreferenceUtils.NotificationStatus,status).commit()
-    }
+//    private fun setNotificationStatus(status : Boolean) {
+//        val preferences = applicationContext.getSharedPreferences(SharedPreferenceUtils.PreferenceName,Context.MODE_PRIVATE);
+//        preferences.edit().putBoolean(SharedPreferenceUtils.NotificationStatus,status).commit()
+//    }
 }
