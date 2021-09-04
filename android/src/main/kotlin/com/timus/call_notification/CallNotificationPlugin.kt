@@ -1,3 +1,4 @@
+
 package com.timus.call_notification
 
 import android.app.Activity
@@ -5,14 +6,11 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
-import com.timus.call_notification.enums.NotificationLifeCycle
 import com.timus.call_notification.models.NotificationData
 import com.timus.call_notification.models.ReceivedNotificationData
 import com.timus.call_notification.utils.NotificationBuilder
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -22,8 +20,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.concurrent.timer
 import kotlin.concurrent.timerTask
 
 /** CallNotificationPlugin */
@@ -38,7 +34,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   private var initialActivity: Activity? = null
   private var unHandledActionIntent : Intent? = null;
   private var notificationTimer : Timer? = null;
-    private var isNotificationEnabled = false;
+  private var isNotificationEnabled = false;
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
@@ -57,24 +53,16 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
         "cancelCallNotification" -> {
           cancelCallNotification()
           result.success(true)
-        }
-        "showUnhandledPressedAction" -> {
+        } "showUnhandledPressedAction" -> {
             showUnhandledPressedAction();
             result.success(true);
         } "isNotificationEnabled" -> {
-//          val status = currentNotificationStatus();
           result.success(isNotificationEnabled)
-        }
-        else -> {
+        } else -> {
           result.notImplemented()
         }
     }
   }
-
-    private fun currentNotificationStatus() : Boolean {
-        val preferences = applicationContext.getSharedPreferences(SharedPreferenceUtils.PreferenceName,Context.MODE_PRIVATE);
-        return preferences.getBoolean(SharedPreferenceUtils.NotificationStatus,false)
-    }
 
     private fun showUnhandledPressedAction(){
         if(unHandledActionIntent != null){
@@ -116,6 +104,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
 
     private fun startCallForegroundService(notificationData : HashMap<String,Any>){
         foregroundIntent.putExtra("notificationData",notificationData);
+
         ContextCompat.startForegroundService(applicationContext,foregroundIntent);
         val formatedNotificationData = NotificationData(notificationData)
         notificationTimer = Timer("PersonalNotification",false)
@@ -125,7 +114,6 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
 
   private fun cancelCallNotification(){
-//      val status = currentNotificationStatus();
       if(isNotificationEnabled){
           applicationContext.stopService(foregroundIntent)
           isNotificationEnabled = false;

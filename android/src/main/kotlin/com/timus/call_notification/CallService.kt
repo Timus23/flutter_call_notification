@@ -31,14 +31,12 @@ class CallService : Service() {
         displayNotifications(NotificationData(tempData))
         vibratePhone();
         playRingtone();
-//        setNotificationStatus(true)
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
         ringTone.stop();
         vibrator.cancel();
-//        setNotificationStatus(false)
         stopForeground(true)
         super.onDestroy()
     }
@@ -51,19 +49,19 @@ class CallService : Service() {
 
     private fun playRingtone(){
         val ringTonePath: Uri = getRingToneUri();
-        RingtoneManager.setActualDefaultRingtoneUri(
-                applicationContext, RingtoneManager.TYPE_RINGTONE,ringTonePath);
+//        RingtoneManager.setActualDefaultRingtoneUri(
+//                applicationContext, RingtoneManager.TYPE_RINGTONE,ringTonePath);
         ringTone = RingtoneManager.getRingtone(applicationContext,ringTonePath)
         ringTone.play();
     }
 
     private fun getRingToneUri() : Uri {
-       val ringtoneId = resources.getIdentifier("ringtone","raw",applicationContext.packageName);
-        return if(ringtoneId > 0){
-            Uri.parse("android.resource://" + applicationContext.packageName + "/" + ringtoneId)
-        }else{
-            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        }
+//       val ringtoneId = resources.getIdentifier("ringtone","raw",applicationContext.packageName);
+//        return if(ringtoneId > 0){
+//            Uri.parse("android.resource://" + applicationContext.packageName + "/" + ringtoneId)
+//        }else{
+           return RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+//        }
     }
 
     private fun displayNotifications(notificationData: NotificationData) {
@@ -114,9 +112,4 @@ class CallService : Service() {
         val packageManager = context.packageManager
         return packageManager.getLaunchIntentForPackage(packageName)!!
     }
-
-//    private fun setNotificationStatus(status : Boolean) {
-//        val preferences = applicationContext.getSharedPreferences(SharedPreferenceUtils.PreferenceName,Context.MODE_PRIVATE);
-//        preferences.edit().putBoolean(SharedPreferenceUtils.NotificationStatus,status).commit()
-//    }
 }

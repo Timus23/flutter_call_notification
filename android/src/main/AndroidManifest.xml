@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.timus.call_notification">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.timus.call_notification">
   <uses-permission android:name="android.permission.VIBRATE"/>
-  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <application>
-    <service android:name=".CallService" android:exported="true"/>
+    <service android:name=".CallService" android:exported="true" android:enabled="true"/>
   </application>
 </manifest>
