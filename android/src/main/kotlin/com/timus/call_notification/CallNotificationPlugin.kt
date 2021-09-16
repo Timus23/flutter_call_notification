@@ -83,14 +83,18 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   }
 
     private fun invokeNotificationReceived(intent: Intent): Boolean {
-        val actionModel: ReceivedNotificationData? = NotificationBuilder.buildNotificationActionFromIntent(applicationContext, intent)
+        if(intent.action == NotificationButtonActions.launchAction ||
+                intent.action == NotificationButtonActions.rejectAction ||
+                intent.action == NotificationButtonActions.acceptAction){
+          val actionModel: ReceivedNotificationData? = NotificationBuilder.buildNotificationActionFromIntent(applicationContext, intent)
 
-        if (actionModel != null) {
-            val returnObject: Map<String, Any> = actionModel.toMap()
-            if(intent.action == NotificationButtonActions.rejectAction || intent.action == NotificationButtonActions.acceptAction){
+          if (actionModel != null) {
+              val returnObject: Map<String, Any> = actionModel.toMap()
+          if(intent.action == NotificationButtonActions.rejectAction || intent.action == NotificationButtonActions.acceptAction){
                 cancelCallNotification()
-            }
-            channel.invokeMethod(CallNotificationChannel.ReceivedAction, returnObject)
+          }
+          channel.invokeMethod(CallNotificationChannel.ReceivedAction, returnObject)
+          }
         }
         return true
     }
