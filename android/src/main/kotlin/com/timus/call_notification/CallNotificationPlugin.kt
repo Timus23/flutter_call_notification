@@ -2,12 +2,16 @@
 package com.timus.call_notification
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.timus.call_notification.models.NotificationData
 import com.timus.call_notification.models.ReceivedNotificationData
 import com.timus.call_notification.utils.NotificationBuilder
@@ -22,6 +26,7 @@ import io.flutter.plugin.common.PluginRegistry.NewIntentListener
 import java.util.*
 import kotlin.concurrent.timerTask
 
+
 /** CallNotificationPlugin */
 class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener,ActivityAware,Application.ActivityLifecycleCallbacks{
   /// The MethodChannel that will the communication between Flutter and native Android
@@ -34,7 +39,6 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   private var initialActivity: Activity? = null
   private var unHandledActionIntent : Intent? = null;
   private var notificationTimer : Timer? = null;
-  private var isNotificationEnabled = false;
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
@@ -57,7 +61,7 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
             showUnhandledPressedAction();
             result.success(true);
         } "isNotificationEnabled" -> {
-          result.success(isNotificationEnabled)
+          result.success(isCallServiceRunning())
         } else -> {
           result.notImplemented()
         }
@@ -99,9 +103,18 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
         return true
     }
 
+    private fun isCallServiceRunning(): Boolean {
+        val manager = applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager?
+        for (service in manager!!.getRunningServices(Int.MAX_VALUE)) {
+            if (service.service.className.contains(".CallService")) {
+                return true
+            }
+        }
+        return false
+    }
+
     private fun checkNotificationStatusAndStartForgroundService(notificationData : HashMap<String,Any>){
-        if(!isNotificationEnabled) {
-            isNotificationEnabled = true;
+        if(!isCallServiceRunning()) {
             startCallForegroundService(notificationData)
         }
     }
@@ -118,10 +131,9 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
 
   private fun cancelCallNotification(){
-//      if(isNotificationEnabled){
+      if(isCallServiceRunning()){
           applicationContext.stopService(foregroundIntent)
-          isNotificationEnabled = false;
-//      }
+      }
       notificationTimer?.cancel();
       notificationTimer = null;
   }
