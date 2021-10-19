@@ -118,10 +118,10 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
 
   private fun cancelCallNotification(){
-      if(isNotificationEnabled){
+//      if(isNotificationEnabled){
           applicationContext.stopService(foregroundIntent)
           isNotificationEnabled = false;
-      }
+//      }
       notificationTimer?.cancel();
       notificationTimer = null;
   }
