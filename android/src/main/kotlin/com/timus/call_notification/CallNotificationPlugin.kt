@@ -8,10 +8,8 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.timus.call_notification.models.NotificationData
 import com.timus.call_notification.models.ReceivedNotificationData
 import com.timus.call_notification.utils.NotificationBuilder
@@ -33,12 +31,12 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel;
-  lateinit var applicationContext : Context;
-  private lateinit var foregroundIntent : Intent;
+  private lateinit var channel : MethodChannel
+  lateinit var applicationContext : Context
+  private lateinit var foregroundIntent : Intent
   private var initialActivity: Activity? = null
-  private var unHandledActionIntent : Intent? = null;
-  private var notificationTimer : Timer? = null;
+  private var unHandledActionIntent : Intent? = null
+  private var notificationTimer : Timer? = null
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "call_notification")
@@ -50,16 +48,18 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when (call.method) {
         "showNotification" -> {
-          val message: HashMap<String, Any> = call.arguments()
-          checkNotificationStatusAndStartForgroundService(message)
-          result.success(true)
+          val message: HashMap<String, Any>? = call.arguments()
+            if(message != null) {
+                checkNotificationStatusAndStartForgroundService(message)
+                result.success(true)
+            }
         }
         "cancelCallNotification" -> {
           cancelCallNotification()
           result.success(true)
         } "showUnhandledPressedAction" -> {
-            showUnhandledPressedAction();
-            result.success(true);
+            showUnhandledPressedAction()
+        result.success(true);
         } "isNotificationEnabled" -> {
           result.success(isCallServiceRunning())
         } else -> {
@@ -142,14 +142,6 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     channel.setMethodCallHandler(null)
   }
 
-    override fun onNewIntent(intent: Intent?): Boolean {
-        if(intent == null){
-            return true;
-        }else{
-            return receiveNotificationAction(intent);
-        }
-    }
-
     override fun onAttachedToActivity(activityPluginBinding: ActivityPluginBinding) {
     initialActivity = activityPluginBinding.activity
     activityPluginBinding.addOnNewIntentListener(this)
@@ -197,5 +189,13 @@ class CallNotificationPlugin: FlutterPlugin, MethodCallHandler,NewIntentListener
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+    }
+
+    override fun onNewIntent(intent: Intent): Boolean {
+        return if(intent == null){
+            true;
+        }else{
+            receiveNotificationAction(intent);
+        }
     }
 }
